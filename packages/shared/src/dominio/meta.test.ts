@@ -25,7 +25,7 @@ describe('progresso da meta', () => {
 
 describe('contribuição', () => {
   it('aceita contribuição dentro do saldo e do que falta', () => {
-    expect(aplicarContribuicao(meta(), 30, 40)).toEqual({ ok: true, arrecadado: 90, status: 'ABERTA' });
+    expect(aplicarContribuicao(meta(), 50, 40)).toEqual({ ok: true, arrecadado: 90, status: 'ABERTA' });
   });
 
   it('muda o status para ATINGIDA quando completa o alvo', () => {
