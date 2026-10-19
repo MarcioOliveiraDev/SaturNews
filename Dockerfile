@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 # Um único container: a API serve também o frontend (mesma origem, sem CORS).
-FROM node:22-alpine AS build
+FROM node:26-alpine AS build
 WORKDIR /app
 RUN corepack enable
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json .npmrc ./
@@ -13,7 +13,7 @@ RUN pnpm --filter @saturbank/web exec vite build && pnpm --filter @saturbank/api
   && pnpm --filter @saturbank/api deploy --prod --legacy /out \
   && cp -r apps/api/dist /out/dist && cp -r apps/web/dist /out/web
 
-FROM node:22-alpine
+FROM node:26-alpine
 ENV NODE_ENV=production PORT=3000 WEB_DIST=/app/web
 WORKDIR /app
 COPY --from=build /out ./
