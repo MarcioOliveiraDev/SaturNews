@@ -3,3 +3,10 @@ packages:
   - packages/*
 onlyBuiltDependencies:
   - esbuild
+# Cadeia de suprimentos (OWASP A03)
+# Só instala versões publicadas há pelo menos 7 dias (pacotes maliciosos costumam ser removidos antes disso).
+minimumReleaseAge: 10080
+# Recusa atualização que reduza o nível de confiança da publicação (ex.: perdeu a proveniência).
+trustPolicy: no-downgrade
+# Dependências transitivas só do registro (sem git/tarball de origem arbitrária).
+blockExoticSubdeps: true

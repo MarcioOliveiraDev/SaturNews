@@ -1,0 +1,2 @@
+# Falso positivo: Idempotency-Key fictícia usada no teste de duplo clique, não é segredo.
+3dc2513d63bf4f2082020e23d78fe45604f950de:apps/api/test/depositos.test.ts:generic-api-key:95
