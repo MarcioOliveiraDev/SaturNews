@@ -8,7 +8,8 @@ export default defineConfig({
     port: 5173,
     proxy: { '/api': 'http://localhost:3000' },
   },
-  build: { sourcemap: false },
+  // Sem assets embutidos como data: URI — a CSP só permite fontes de 'self'.
+  build: { sourcemap: false, assetsInlineLimit: 0 },
   test: {
     environment: 'jsdom',
     setupFiles: ['src/teste-setup.ts'],

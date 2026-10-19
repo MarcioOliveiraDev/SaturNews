@@ -98,7 +98,8 @@ export async function construirApp({ config, db, aoRegistrar }: OpcoesApp): Prom
 
   app.setNotFoundHandler(async (req, reply) => {
     // Rotas do frontend (SPA) devolvem o index.html; a API responde 404.
-    if (webDist && req.method === 'GET' && !req.url.startsWith('/api/')) {
+    const caminho = req.url.split('?')[0]!;
+    if (webDist && req.method === 'GET' && !caminho.startsWith('/api/') && !/\.[a-z0-9]+$/i.test(caminho)) {
       return reply.type('text/html').sendFile('index.html');
     }
     return enviarProblema(reply, 404, 'NAO_ENCONTRADO');
