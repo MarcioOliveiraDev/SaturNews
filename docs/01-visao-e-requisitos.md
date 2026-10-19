@@ -29,6 +29,7 @@ e conquistar uma experiência coletiva. A aplicação se parece com um app de ba
 - **US11** — Como aluno, quero ver meu extrato (depósitos recebidos e contribuições feitas), com data, valor, autor e descrição.
 - **US12** — Como aluno, quero ver as metas abertas da minha turma com barra de progresso, valor arrecadado e **quanto falta**.
 - **US13** — Como aluno, quero contribuir com parte ou todo o meu saldo para uma meta da minha turma.
+- **US15** — Como aluno, quero **sugerir** uma meta para minha turma (item do catálogo ou ideia curta).
 - **US14** — Como aluno, quero ver quem da turma já contribuiu para uma meta (ranking de colaboração, opcional/configurável).
 
 ### Professor
@@ -39,11 +40,13 @@ e conquistar uma experiência coletiva. A aplicação se parece com um app de ba
 - **US24** — Como professor, quero criar uma meta para a turma a partir do catálogo (ex.: "Filme — S$ 500").
 - **US25** — Como professor, quero marcar uma meta atingida como **resgatada** (experiência realizada).
 - **US26** — Como professor, quero cancelar uma meta aberta, devolvendo automaticamente as contribuições a cada aluno.
+- **US27** — Como professor, quero ver as sugestões de metas da turma e aprová-las (criando a meta) ou recusá-las.
 
 ### Administrador
 - **US30** — Como administrador, quero importar alunos via CSV (nome, turma, matrícula).
 - **US31** — Como administrador, quero manter o catálogo de itens (nome, descrição, ícone, preço sugerido).
 - **US32** — Como administrador, quero consultar o log de auditoria.
+- **US33** — Como administrador, quero **encerrar o ano letivo**, zerando os saldos (ver [D7](08-decisoes.md)).
 
 ## 1.4 Regras de negócio
 
@@ -53,7 +56,7 @@ e conquistar uma experiência coletiva. A aplicação se parece com um app de ba
 | RN02 | Somente usuários com papel **Professor** criam moeda (depósito). |
 | RN03 | Professor só deposita para alunos de **turmas às quais está vinculado**. |
 | RN04 | Depósito em lote: mesmo valor para cada aluno selecionado; a operação é **atômica** (todos ou nenhum). |
-| RN05 | Limites configuráveis: valor máximo por depósito (padrão S$ 100) e teto diário por professor (padrão S$ 2.000). |
+| RN05 | Professor **não tem limite** de depósito. O **saldo do aluno tem teto de S$ 100**: depósito individual acima do que cabe é recusado; no lote, cada aluno recebe o que couber até o teto (ver [D5](08-decisoes.md)). |
 | RN06 | Aluno só contribui para metas **abertas** da **própria turma**. |
 | RN07 | Contribuição ≤ saldo do aluno **e** ≤ valor que falta para a meta (não há "troco"). |
 | RN08 | O saldo nunca fica negativo. |
@@ -62,6 +65,9 @@ e conquistar uma experiência coletiva. A aplicação se parece com um app de ba
 | RN11 | Transações são **imutáveis**. Correções são feitas por transação de estorno, nunca por edição/exclusão. |
 | RN12 | Toda transação registra: tipo, valor, origem, destino, autor, data/hora, descrição e identificador de lote (quando houver). |
 | RN13 | Aluno vê apenas os próprios dados e os dados agregados da sua turma. |
+| RN15 | Somente o professor cria metas; alunos apenas sugerem. |
+| RN16 | Contribuições **não podem ser retiradas** pelo aluno. |
+| RN17 | No encerramento do ano letivo, metas abertas são canceladas (com estorno) e todos os saldos são zerados por transação `ZERAMENTO`. |
 | RN14 | Um aluno pertence a **uma** turma por ano letivo. Transferência de turma mantém saldo; contribuições em metas da turma antiga permanecem lá. |
 
 ### Ciclo de vida da meta
@@ -87,11 +93,6 @@ ABERTA ──(arrecadado = alvo)──► ATINGIDA ──(professor resgata)─�
 - Dinheiro real ou conversão de moeda.
 - App nativo (o PWA atende).
 
-## 1.7 Perguntas em aberto
+## 1.7 Perguntas respondidas
 
-1. Login do aluno: matrícula + senha (proposto), PIN de 6 dígitos ou SSO do Google Workspace da escola?
-2. Metas: criadas só pelo professor (proposto) ou alunos sugerem?
-3. Aluno pode desfazer uma contribuição numa meta ainda aberta? (proposto: não)
-4. Ranking de contribuição visível para a turma? (pode gerar constrangimento — proposto: desligado por padrão)
-5. Os limites padrão (RN05) fazem sentido?
-6. O saldo zera ao fim do ano letivo?
+Todas as perguntas foram respondidas — ver [08-decisoes.md](08-decisoes.md). Ranking de contribuição: desligado na v1.

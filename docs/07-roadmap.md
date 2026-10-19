@@ -2,14 +2,20 @@
 
 Cada entrega é feita em TDD e termina com CI verde.
 
-| Fase | Entrega | Inclui |
+| Fase | Entrega | Status |
 |------|---------|--------|
-| 0 | **Fundação** | Monorepo, CI com todas as etapas, Docker Compose, design tokens, seed de alunos fictícios |
-| 1 | **Autenticação e papéis** | Login, sessão, troca de senha, rate limit, RBAC, auditoria de login |
-| 2 | **Conta e depósitos** | Saldo, extrato, depósito individual e em lote, limites, idempotência |
-| 3 | **Metas da turma** | Catálogo, criação de meta, contribuição, progresso "faltam S$ X", meta atingida, resgate, cancelamento com estorno |
-| 4 | **Visão do professor** | Lista de alunos com saldo, extrato por aluno, painel da turma |
-| 5 | **Administração** | Importação CSV de alunos reais, cadastros, configurações, consulta de auditoria |
-| 6 | **Polimento** | PWA instalável, animações, acessibilidade (axe), teste de carga, pentest com ZAP |
+| 0 | **Fundação** — monorepo, CI, Docker, design tokens, seed fictício | ✅ |
+| 1 | **Autenticação e papéis** — login, sessão, troca de senha, rate limit, RBAC, auditoria | ✅ |
+| 2 | **Conta e depósitos** — saldo, extrato, depósito individual e em lote, teto S$ 100, idempotência | ✅ |
+| 3 | **Metas da turma** — catálogo, metas, contribuição, "faltam S$ X", resgate, cancelamento com estorno, sugestões | ✅ |
+| 4 | **Visão do professor** — alunos com saldo, extrato por aluno | ✅ |
+| 5 | **Administração** — importação CSV, redefinição de senha, encerramento do ano, auditoria | ✅ (parcial, ver abaixo) |
+| 6 | **Polimento** — PWA offline, animações, testes de carga, pentest | ⏳ |
 
-O MVP utilizável em sala corresponde às fases 0–4.
+## Pendências conhecidas
+
+- **Cadastro de professores pela interface**: hoje professores vêm do seed ou do banco. Próximo passo: importação CSV de professores e vínculo com turmas.
+- **CRUD do catálogo** pela coordenação (hoje: 4 itens via migração).
+- **MFA (TOTP)** para administradores (previsto no doc 5, A07).
+- **Service worker** para leitura offline (o app já tem manifesto e é instalável como atalho).
+- **Política de retenção LGPD** automatizada (anonimizar alunos inativos).

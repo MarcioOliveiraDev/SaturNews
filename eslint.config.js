@@ -1,0 +1,25 @@
+import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import security from 'eslint-plugin-security';
+import reactHooks from 'eslint-plugin-react-hooks';
+import globals from 'globals';
+
+export default tseslint.config(
+  { ignores: ['**/dist/**', '**/coverage/**', '**/dev-dist/**', '**/playwright-report/**'] },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  security.configs.recommended,
+  {
+    languageOptions: { globals: { ...globals.node, ...globals.browser } },
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      // Falsos positivos frequentes com acesso a objetos tipados.
+      'security/detect-object-injection': 'off',
+    },
+  },
+  {
+    files: ['apps/web/**/*.{ts,tsx}'],
+    plugins: { 'react-hooks': reactHooks },
+    rules: reactHooks.configs.recommended.rules,
+  },
+);

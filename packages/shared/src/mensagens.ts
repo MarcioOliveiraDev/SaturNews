@@ -1,0 +1,22 @@
+/** Mensagens exibidas ao usuário para cada código de erro da API. */
+export const MENSAGENS_ERRO: Record<string, string> = {
+  VALOR_INVALIDO: 'Informe um valor inteiro maior que zero.',
+  TETO_SALDO: 'O saldo do aluno não pode passar de S$ 100.',
+  LOTE_VAZIO: 'Selecione pelo menos um aluno.',
+  SALDO_INSUFICIENTE: 'Saldo insuficiente.',
+  EXCEDE_META: 'O valor é maior do que falta para a meta.',
+  META_FECHADA: 'Esta meta não aceita mais contribuições.',
+  CREDENCIAIS_INVALIDAS: 'Login ou senha inválidos.',
+  CONTA_BLOQUEADA: 'Muitas tentativas. Tente novamente em alguns minutos.',
+  NAO_AUTENTICADO: 'Sua sessão expirou. Entre novamente.',
+  PROIBIDO: 'Você não tem permissão para esta ação.',
+  NAO_ENCONTRADO: 'Não encontrado.',
+  ENTRADA_INVALIDA: 'Dados inválidos.',
+  CSRF: 'Requisição inválida. Recarregue a página.',
+  TROCA_SENHA_OBRIGATORIA: 'Troque sua senha para continuar.',
+  LIMITE_SUGESTOES: 'Você já tem 3 sugestões aguardando o professor.',
+  ESTADO_INVALIDO: 'Esta ação não é possível no estado atual.',
+  MUITAS_REQUISICOES: 'Muitas requisições. Aguarde um pouco.',
+  SEM_CONEXAO: 'Sem conexão. Verifique a internet e tente de novo.',
+  ERRO_INTERNO: 'Algo deu errado. Tente novamente.',
+};

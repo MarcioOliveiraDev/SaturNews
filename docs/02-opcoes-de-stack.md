@@ -72,6 +72,8 @@ ter front e back na mesma linguagem, com tipos compartilhados, reduz erros de
 integração e simplifica o TDD de ponta a ponta. Se a escola tiver mais
 familiaridade com Python, B é uma alternativa igualmente segura.
 
+> **Atualização:** TypeScript aprovado. Na implementação, NestJS foi trocado por **Fastify** e Prisma por **Kysely** — ver [T1–T3](08-decisoes.md#decisões-técnicas).
+
 ## 2.4 Estrutura de repositório proposta (Opção A)
 
 ```

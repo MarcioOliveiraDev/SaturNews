@@ -1,0 +1,18 @@
+version: 2
+# cooldown: só propõe versões publicadas há 7+ dias (cadeia de suprimentos, OWASP A03)
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule: { interval: weekly }
+    cooldown:
+      default-days: 7
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }
+    cooldown:
+      default-days: 7
+  - package-ecosystem: docker
+    directory: /
+    schedule: { interval: weekly }
+    cooldown:
+      default-days: 7
