@@ -36,9 +36,9 @@ piso, não objetivo — os casos de borda abaixo importam mais.
 - [ ] Só meta `ATINGIDA` pode ser resgatada.
 
 ### Domínio — Depósito
-- [ ] Valor não inteiro, ≤ 0 ou acima do limite por depósito é rejeitado.
-- [ ] Depósito que ultrapassa o teto diário do professor é rejeitado.
-- [ ] Lote calcula total = valor × quantidade e respeita o teto diário.
+- [ ] Valor não inteiro ou ≤ 0 é rejeitado.
+- [ ] Depósito individual que ultrapassa o teto de saldo (S$ 100) é rejeitado informando quanto cabe.
+- [ ] Lote credita a cada aluno o que couber até o teto e pula quem está no teto.
 
 ### Integração — API
 - [ ] Aluno chamando `POST /depositos` → 403.

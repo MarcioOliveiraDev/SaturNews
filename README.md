@@ -5,9 +5,8 @@ Professores depositam **$aturCoin$** (S$) nas contas dos alunos; os alunos junta
 o saldo com colegas da mesma turma para "comprar" experiências coletivas
 (ida à quadra, sessão de filme, laboratório de informática, jogos de tabuleiro).
 
-> **Status:** fase de documentação. Nenhum código foi escrito ainda. A stack
-> abaixo é uma **proposta** e precisa ser aprovada antes de começar a codificação
-> (ver [Decisões pendentes](#decisões-pendentes)).
+> **Status:** MVP em desenvolvimento (TDD). Decisões registradas em
+> [docs/08-decisoes.md](docs/08-decisoes.md).
 
 ## Documentação
 
@@ -20,25 +19,54 @@ o saldo com colegas da mesma turma para "comprar" experiências coletivas
 | 5 | [Segurança — OWASP Top 10](docs/05-seguranca-owasp.md) | Controles por categoria e como serão testados |
 | 6 | [Estratégia de TDD](docs/06-estrategia-tdd.md) | Ciclo, pirâmide de testes, backlog inicial de testes |
 | 7 | [Roadmap](docs/07-roadmap.md) | Entregas incrementais |
+| 8 | [Decisões (ADR)](docs/08-decisoes.md) | Respostas do responsável e decisões técnicas |
 | — | [Alunos fictícios](docs/dados/alunos-ficticios.csv) | Dados de exemplo (formato para importação dos reais) |
 
-## Resumo da proposta
+## Stack
 
-- **Frontend:** React + TypeScript + Vite, Tailwind CSS, instalável como PWA.
-- **Backend:** Node.js + TypeScript com NestJS (API REST).
-- **Banco de dados:** PostgreSQL com Prisma; razão contábil (ledger) imutável.
-- **Testes (TDD):** Vitest, Supertest, Testcontainers, Playwright.
+- **Frontend:** React + TypeScript + Vite, Tailwind CSS, TanStack Query.
+- **Backend:** Node.js + TypeScript com Fastify (API REST), Zod para validação.
+- **Banco de dados:** PostgreSQL com Kysely; razão contábil (ledger) imutável.
+- **Testes (TDD):** Vitest (unitário, integração com Postgres real, componentes) e Playwright (E2E).
 - **Segurança:** OWASP Top 10:2025 + ASVS nível 2 como referência; LGPD (dados de menores).
 
-## Decisões pendentes
+## Regras principais
 
-Antes de codificar, preciso que você confirme:
+- Só professores depositam S$ (sem limite de valor); o **saldo do aluno tem teto de S$ 100**.
+- Depósito individual ou para vários/todos os alunos da turma de uma vez.
+- Alunos contribuem para metas da turma (quadra, filme, laboratório, jogos…) e veem quanto falta.
+- Só o professor cria metas; alunos sugerem. Contribuições não podem ser retiradas.
+- No fim do ano letivo o administrador encerra o ano e os saldos são zerados.
 
-1. **Stack** — aprovar a recomendação (TypeScript ponta a ponta) ou escolher outra opção do doc 2.
-2. **Login dos alunos** — matrícula + senha/PIN (proposto) ou outro método (ex.: Google Workspace da escola).
-3. **Quem cria as metas da turma** — professor (proposto) ou os alunos sugerem e o professor aprova.
-4. **Desistência de contribuição** — o aluno pode retirar o que colocou numa meta aberta? (proposto: não; só o professor cancela a meta e tudo é devolvido).
-5. **Limites** — teto de depósito por professor/dia e valor máximo por depósito (proposto: configurável).
-6. **Hospedagem** — servidor da escola, nuvem gratuita (Render/Fly/Railway) ou outra.
+## Como rodar (desenvolvimento)
 
-Detalhes no fim de cada documento.
+Pré-requisitos: Node.js 22+, pnpm 10+ e PostgreSQL 16 (local ou `docker compose up -d db`).
+
+```bash
+pnpm install
+cp apps/api/.env.example apps/api/.env      # ajuste DATABASE_URL se necessário
+pnpm --filter @saturbank/api db:migrate
+pnpm --filter @saturbank/api db:seed        # turmas, alunos e professores fictícios
+pnpm dev                                    # API em :3000 e web em :5173
+```
+
+Contas de exemplo (senha `Saturno2026!` para todas — apenas desenvolvimento):
+
+| Papel | Login |
+|-------|-------|
+| Aluno (6º A) | `2026001` |
+| Professor | `prof.marta` |
+| Administrador | `admin` |
+
+## Testes
+
+```bash
+pnpm test              # unitários + integração (exige Postgres; ver TEST_DATABASE_URL)
+pnpm test:e2e          # Playwright em viewports de celular e desktop
+pnpm lint && pnpm typecheck
+```
+
+## Deploy em nuvem
+
+`Dockerfile` na raiz gera um único container (API + frontend). Variáveis obrigatórias em
+[`apps/api/.env.example`](apps/api/.env.example). Detalhes em [docs/03-arquitetura.md](docs/03-arquitetura.md#35-ambientes).

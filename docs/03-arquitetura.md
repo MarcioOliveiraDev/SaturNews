@@ -1,6 +1,6 @@
 # 3. Arquitetura
 
-> Baseada na Opção A (doc 2). Se outra stack for escolhida, o modelo de dados,
+> Baseada na Opção A (doc 2), com Fastify + Kysely ([T1–T2](08-decisoes.md#decisões-técnicas)). Se outra stack for escolhida, o modelo de dados,
 > a API e os fluxos continuam válidos.
 
 ## 3.1 Visão de componentes
