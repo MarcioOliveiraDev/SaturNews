@@ -1,0 +1,39 @@
+{
+  "name": "@saturbank/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p tsconfig.json && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "pnpm build && pnpm --filter @saturbank/api build && playwright test",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@fontsource-variable/sora": "^5.2.5",
+    "@fontsource-variable/unbounded": "^5.2.5",
+    "@fontsource/permanent-marker": "^5.2.5",
+    "@saturbank/shared": "workspace:*",
+    "@tanstack/react-query": "^5.80.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router": "^7.6.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "~1.56.0",
+    "@tailwindcss/vite": "^4.1.10",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.5.2",
+    "jsdom": "^26.1.0",
+    "tailwindcss": "^4.1.10",
+    "vite": "^6.3.5",
+    "vitest": "^3.2.4"
+  }
+}

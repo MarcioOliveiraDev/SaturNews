@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc -p tsconfig.json",
     "db:migrate": "tsx --env-file-if-exists=.env src/db/migrar.ts",
-    "db:seed": "tsx --env-file-if-exists=.env src/db/seed.ts"
+    "db:seed": "tsx --env-file-if-exists=.env src/db/seed.ts",
+    "criar-admin": "tsx --env-file-if-exists=.env src/db/criar-admin.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
