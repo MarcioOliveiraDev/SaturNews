@@ -8,6 +8,9 @@ const esquema = z.object({
   DATABASE_URL: z.string().url(),
   TRUST_PROXY: booleano.default('false'),
   WEB_DIST: z.string().optional(),
+  // Por IP. Uma sala inteira costuma sair pelo mesmo IP da escola (NAT); o bloqueio
+  // por conta (5 falhas) é o que barra força bruta contra um aluno específico.
+  LIMITE_LOGIN_POR_MINUTO: z.coerce.number().int().positive().default(60),
 });
 
 export interface Config {
@@ -37,7 +40,7 @@ export function carregarConfig(env: NodeJS.ProcessEnv = process.env): Config {
     confiarProxy: e.TRUST_PROXY,
     webDist: e.WEB_DIST || undefined,
     cookieSeguro: e.NODE_ENV === 'production',
-    limiteRequisicoesLogin: 10,
-    limiteRequisicoesGlobal: 300,
+    limiteRequisicoesLogin: e.LIMITE_LOGIN_POR_MINUTO,
+    limiteRequisicoesGlobal: 600,
   };
 }

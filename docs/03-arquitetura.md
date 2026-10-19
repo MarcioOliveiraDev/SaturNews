@@ -110,5 +110,14 @@ Erros seguem RFC 9457 (`application/problem+json`) sem detalhes internos.
 | Ambiente | Uso |
 |----------|-----|
 | local | Docker Compose (Postgres) + seed com alunos fictícios |
-| CI | GitHub Actions: lint → testes unitários → integração (Testcontainers) → E2E → SAST/SCA → ZAP baseline |
-| produção | HTTPS obrigatório, segredos em variáveis de ambiente, backups diários do Postgres |
+| CI | GitHub Actions: lint → typecheck → testes (Postgres como serviço) → `pnpm audit` → E2E → gitleaks → Semgrep |
+| produção | Container único (`Dockerfile`) + PostgreSQL gerenciado; HTTPS obrigatório (TLS no provedor), `TRUST_PROXY=true` atrás do load balancer, segredos em variáveis de ambiente, backups diários do Postgres |
+
+### Deploy em nuvem (passo a passo)
+
+1. Criar um PostgreSQL 16 gerenciado (preferir região no Brasil).
+2. Publicar o container do `Dockerfile` com `DATABASE_URL`, `NODE_ENV=production` e `TRUST_PROXY=true`.
+   As migrações rodam automaticamente ao subir.
+3. Criar o primeiro administrador: `node dist/criar-admin.js coordenacao "Nome"` (mostra uma senha provisória).
+4. Pela tela da coordenação, importar o CSV com os alunos reais.
+5. Em produção, o usuário do banco usado pela API não deve ter permissão de `TRUNCATE`/`DROP`.

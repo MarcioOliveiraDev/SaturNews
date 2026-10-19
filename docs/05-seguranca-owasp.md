@@ -19,6 +19,15 @@ escrito antes da implementação, conforme o doc 6.
 | A09 | **Security Logging & Alerting Failures** | Fraude sem rastro | Auditoria de login (sucesso/falha), depósitos, contribuições, cancelamentos, ações admin; logs estruturados (pino) sem senhas/tokens; alerta para padrões anômalos (muitas falhas de login, depósito no teto) | Teste que cada ação financeira gera registro de auditoria |
 | A10 | **Mishandling of Exceptional Conditions** | Erro no meio do lote deixa metade dos alunos com depósito; falha aberta em autorização | Transações SQL atômicas (tudo ou nada); filtro global de exceções que **falha fechado**; timeouts e limites de payload; respostas RFC 9457 sem detalhes internos | Teste que injeta falha no N-ésimo depósito do lote e verifica rollback total |
 
+> **Status:** controles de A01, A02, A04–A10 implementados e cobertos por testes em `apps/api/test`
+> (`seguranca`, `auth`, `depositos`, `metas`, `ledger`…). A03: lockfile, `pnpm audit` no CI (já barrou
+> versões vulneráveis de `@fastify/static` e `csv-parse` durante o desenvolvimento) e Dependabot.
+> Pendente: MFA para administradores e ZAP baseline no CI.
+>
+> Ajuste feito durante a implementação: o rate limit de login por IP é de **60/min** (configurável),
+> porque uma sala inteira sai pelo mesmo IP da escola; a força bruta contra uma conta é barrada pelo
+> bloqueio após 5 falhas.
+
 ## 5.1 Privacidade (LGPD)
 
 - Minimização: apenas nome, turma, matrícula e credenciais.

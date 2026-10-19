@@ -45,3 +45,5 @@
 | T5 | Imutabilidade de `transacao` e `auditoria` por **trigger** que bloqueia UPDATE/DELETE | Vale para qualquer usuário do banco, testável |
 | T6 | Sessão no servidor (token aleatório de 256 bits; só o hash SHA-256 é guardado) + token CSRF por sessão no header `X-CSRF-Token` | OWASP A01/A07/A08 |
 | T7 | Expiração de sessão: 30 min de inatividade, 8 h absoluta | 15 min se mostrou curto para uso em aula |
+| T8 | Fontes auto-hospedadas (@fontsource) em vez do Google Fonts | LGPD (não enviar IP dos alunos a terceiros) e CSP `font-src 'self'` |
+| T9 | Estorno de meta cancelada devolve o valor integral, mesmo acima do teto | Não tirar moedas do aluno; acima do teto ele só não recebe novos depósitos |

@@ -38,9 +38,18 @@ o saldo com colegas da mesma turma para "comprar" experiências coletivas
 - Só o professor cria metas; alunos sugerem. Contribuições não podem ser retiradas.
 - No fim do ano letivo o administrador encerra o ano e os saldos são zerados.
 
+## Estrutura
+
+```
+apps/api        API Fastify (TypeScript) + migrações e testes de integração
+apps/web        Frontend React (PWA) + testes de componentes e E2E (Playwright)
+packages/shared Regras de domínio puras, schemas Zod e tipos compartilhados
+docs/           Documentação do projeto
+```
+
 ## Como rodar (desenvolvimento)
 
-Pré-requisitos: Node.js 22+, pnpm 10+ e PostgreSQL 16 (local ou `docker compose up -d db`).
+Pré-requisitos: Node.js 22+, pnpm 10+ e PostgreSQL 16 (local ou `docker compose up -d db`, que já cria os bancos `saturbank_test` e `saturbank_e2e`).
 
 ```bash
 pnpm install

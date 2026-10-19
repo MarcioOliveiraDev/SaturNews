@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  qualidade:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/saturbank_test
+      E2E_DATABASE_URL: postgres://postgres:postgres@localhost:5432/saturbank_e2e
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - name: Criar bancos de teste
+        run: psql postgres://postgres:postgres@localhost:5432/postgres -f scripts/criar-bancos-teste.sql
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - name: Testes unitários, de componentes e de integração
+        run: pnpm test
+      - name: Dependências sem vulnerabilidades altas (OWASP A03)
+        run: pnpm audit --prod --audit-level high
+      - run: pnpm exec playwright install --with-deps chromium
+        working-directory: apps/web
+      - name: E2E (build de produção)
+        run: pnpm test:e2e
+
+  segredos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  sast:
+    runs-on: ubuntu-latest
+    container: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v4
+      - run: semgrep scan --config p/owasp-top-ten --config p/typescript --error
