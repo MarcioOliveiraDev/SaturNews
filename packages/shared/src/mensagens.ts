@@ -14,6 +14,7 @@ export const MENSAGENS_ERRO: Record<string, string> = {
   ENTRADA_INVALIDA: 'Dados inválidos.',
   CSRF: 'Requisição inválida. Recarregue a página.',
   TROCA_SENHA_OBRIGATORIA: 'Troque sua senha para continuar.',
+  LIMITE_SUGESTOES: 'Você já tem 3 sugestões aguardando o professor.',
   ESTADO_INVALIDO: 'Esta ação não é possível no estado atual.',
   MUITAS_REQUISICOES: 'Muitas requisições. Aguarde um pouco.',
   ERRO_INTERNO: 'Algo deu errado. Tente novamente.',

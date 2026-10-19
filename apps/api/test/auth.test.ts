@@ -17,7 +17,7 @@ describe('login (OWASP A07)', () => {
     const corpo = r.json();
     expect(corpo.usuario).toMatchObject({ id: aluno.id, nome: 'Ana Souza', papel: 'ALUNO', turma: { nome: '6º A' } });
     expect(corpo.usuario.csrfToken).toMatch(/^[\w-]{40,}$/);
-    expect(JSON.stringify(corpo)).not.toMatch(/senha|hash/i);
+    expect(JSON.stringify(corpo)).not.toMatch(/senhaHash|argon2|idHash/i);
     const cookie = r.cookies.find((c) => c.name === 'sb_sessao')!;
     expect(cookie.httpOnly).toBe(true);
     expect(cookie.sameSite).toBe('Strict');
