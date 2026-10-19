@@ -1,0 +1,104 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/unbounded';
+@import '@fontsource-variable/sora';
+@import '@fontsource/permanent-marker';
+
+/* Identidade inspirada no festival: preto profundo, neon e formas líquidas. */
+@theme {
+  --color-fundo: #050505;
+  --color-superficie: #141414;
+  --color-superficie-2: #1f1f1f;
+  --color-borda: #2a2a2a;
+  --color-neon: #5cff2e;
+  --color-rosa: #ff2e9a;
+  --color-ciano: #22e5d4;
+  --color-amarelo: #ffc81a;
+  --color-roxo: #8b3dff;
+  --color-texto: #f5f5f5;
+  --color-suave: #a3a3a3;
+  --color-perigo: #ff4d4d;
+
+  --font-display: 'Unbounded Variable', system-ui, sans-serif;
+  --font-marker: 'Permanent Marker', cursive;
+  --font-sans: 'Sora Variable', system-ui, sans-serif;
+
+  --animate-flutuar: flutuar 18s ease-in-out infinite;
+  @keyframes flutuar {
+    0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+    33% { transform: translate(4%, -3%) scale(1.08) rotate(8deg); }
+    66% { transform: translate(-3%, 4%) scale(0.95) rotate(-6deg); }
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-fundo font-sans text-texto antialiased;
+    min-height: 100dvh;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-neon;
+  }
+  input, select, textarea {
+    font: inherit;
+  }
+}
+
+/* Bolhas de gradiente com granulado, como nas peças de referência. */
+@utility bolha {
+  @apply pointer-events-none absolute rounded-full opacity-70 blur-2xl;
+  background: radial-gradient(circle at 30% 30%, var(--color-rosa), var(--color-roxo) 45%, var(--color-ciano) 70%, transparent 72%);
+}
+@utility bolha-verde {
+  background: radial-gradient(circle at 60% 40%, var(--color-neon), var(--color-ciano) 50%, transparent 70%);
+}
+@utility granulado {
+  &::after {
+    content: '';
+    @apply pointer-events-none absolute inset-0 rounded-[inherit] opacity-30 mix-blend-overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+/* Retícula (halftone) */
+@utility reticula {
+  background-image: radial-gradient(circle, rgb(255 255 255 / 0.18) 1px, transparent 1.6px);
+  background-size: 7px 7px;
+}
+@utility cartao {
+  @apply relative overflow-hidden rounded-3xl border border-borda bg-superficie;
+}
+@utility botao {
+  @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 font-display text-sm font-semibold tracking-wide transition active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40;
+}
+@utility botao-primario {
+  @apply botao bg-neon text-black hover:brightness-110;
+}
+@utility botao-rosa {
+  @apply botao bg-rosa text-white hover:brightness-110;
+}
+@utility botao-fantasma {
+  @apply botao border border-borda bg-superficie-2 text-texto hover:border-suave;
+}
+@utility campo {
+  @apply min-h-12 w-full rounded-2xl border border-borda bg-superficie-2 px-4 text-base text-texto placeholder:text-suave/60 focus:border-neon focus:outline-none;
+}
+@utility rotulo {
+  @apply mb-1.5 block text-sm font-medium text-suave;
+}
+@utility titulo-display {
+  @apply font-display font-bold tracking-tight;
+}
+@utility gradiente-texto {
+  @apply bg-gradient-to-r from-neon via-ciano to-rosa bg-clip-text text-transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

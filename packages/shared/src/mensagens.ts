@@ -17,5 +17,6 @@ export const MENSAGENS_ERRO: Record<string, string> = {
   LIMITE_SUGESTOES: 'Você já tem 3 sugestões aguardando o professor.',
   ESTADO_INVALIDO: 'Esta ação não é possível no estado atual.',
   MUITAS_REQUISICOES: 'Muitas requisições. Aguarde um pouco.',
+  SEM_CONEXAO: 'Sem conexão. Verifique a internet e tente de novo.',
   ERRO_INTERNO: 'Algo deu errado. Tente novamente.',
 };
