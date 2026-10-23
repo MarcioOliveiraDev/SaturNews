@@ -8,6 +8,8 @@ o saldo com colegas da mesma turma para "comprar" experiências coletivas
 > **Status:** MVP em desenvolvimento (TDD). Decisões registradas em
 > [docs/08-decisoes.md](docs/08-decisoes.md).
 
+> 🎮 **Extra:** [Saturn Rush](game/README.md) — jogo de plataforma speedrun com o Saturno como herói (`game/`).
+
 ## Documentação
 
 | # | Documento | Conteúdo |

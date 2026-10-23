@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Saturn Rush</title>
+<meta name="description" content="Saturn Rush — speedrun de plataforma 2D no espaço.">
+<link rel="icon" href="assets/saturno.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #05030f;
+    --panel: rgba(14, 7, 38, 0.86);
+    --ink: #f4ecff;
+    --muted: #b9a8e6;
+    --cyan: #39e5ff;
+    --pink: #ff4fd8;
+    --gold: #ffd23f;
+    --line: rgba(160, 120, 255, 0.4);
+    color-scheme: dark;
+  }
+  /* O jogo é sempre escuro (cenário espacial); os temas repetem a mesma paleta. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #05030f; --ink: #f4ecff; }
+  }
+  :root[data-theme="dark"] { --bg: #05030f; --ink: #f4ecff; }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; height: 100%; background: var(--bg); color: var(--ink);
+    font-family: "Press Start 2P", ui-monospace, monospace;
+    overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none;
+  }
+  body { display: grid; place-items: center; }
+  #wrap {
+    position: relative;
+    width: min(100vw, calc(100dvh * 960 / 544));
+    aspect-ratio: 960 / 544;
+    container-type: inline-size;
+    box-shadow: 0 0 60px rgba(120, 60, 255, 0.35);
+  }
+  canvas { display: block; width: 100%; height: 100%; }
+
+  #ui {
+    position: absolute; inset: 0; display: grid; place-items: center; overflow-y: auto;
+    background: radial-gradient(ellipse at center, rgba(5, 3, 15, 0.15), rgba(5, 3, 15, 0.7));
+  }
+  #ui.dim { background: rgba(5, 3, 15, 0.72); }
+  #ui[hidden], .screen[hidden] { display: none; }
+  .screen { text-align: center; padding: 2cqw; width: 100%; max-width: 92cqw; }
+
+  h1 {
+    margin: 0.6cqw 0; font-size: clamp(22px, 5.4cqw, 60px); letter-spacing: 0.3cqw;
+    background: linear-gradient(90deg, var(--cyan), var(--pink), var(--gold));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 1.2cqw rgba(255, 79, 216, 0.55));
+  }
+  h2 { margin: 0 0 2cqw; font-size: clamp(14px, 2.8cqw, 32px); color: var(--cyan); text-shadow: 0 0 1cqw var(--cyan); }
+  p { margin: 0.8cqw 0; }
+  .tag { color: var(--gold); font-size: clamp(9px, 1.4cqw, 16px); letter-spacing: 0.2cqw; }
+  .foot { color: var(--muted); font-size: clamp(7px, 1cqw, 12px); line-height: 1.8; margin-top: 1.6cqw; }
+  .logo {
+    width: 30cqw; max-width: 340px;
+    filter: drop-shadow(0 0 1.8cqw rgba(255, 79, 216, 0.6));
+    animation: bob 2.6s ease-in-out infinite;
+  }
+  @keyframes bob { 50% { transform: translateY(-1.2cqw) rotate(-3deg); } }
+
+  .menu { display: flex; flex-direction: column; align-items: center; }
+  button {
+    font: inherit; font-size: clamp(9px, 1.5cqw, 17px); color: var(--ink);
+    padding: 1.1cqw 2.2cqw; margin: 0.5cqw; min-width: 30cqw;
+    background: var(--panel); border: 2px solid var(--line); border-radius: 1cqw;
+    cursor: pointer; transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
+  }
+  button:hover, button:focus-visible {
+    outline: none; border-color: var(--cyan); transform: scale(1.04);
+    box-shadow: 0 0 1.4cqw var(--cyan), inset 0 0 1cqw rgba(57, 229, 255, 0.2);
+  }
+  button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; border-color: var(--line); }
+  button.ghost { background: transparent; min-width: 18cqw; color: var(--muted); }
+
+  .diffs { display: flex; gap: 1.4cqw; justify-content: center; flex-wrap: wrap; margin-bottom: 1.4cqw; }
+  .diffs button { min-width: 0; width: 26cqw; display: flex; flex-direction: column; gap: 1cqw; padding: 2cqw 1.4cqw; }
+  .diffs b { font-size: clamp(11px, 2cqw, 22px); }
+  .diffs small { color: var(--muted); font-size: clamp(7px, 0.95cqw, 11px); line-height: 1.7; }
+  .diffs [data-diff="facil"] b { color: #39ff9c; }
+  .diffs [data-diff="normal"] b { color: var(--gold); }
+  .diffs [data-diff="dificil"] b { color: #ff5a5a; }
+
+  .levels { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.2cqw; margin-bottom: 1.4cqw; }
+  .card {
+    min-width: 0; margin: 0; padding: 1.6cqw 0.8cqw; display: flex; flex-direction: column;
+    align-items: center; gap: 1cqw; min-height: 20cqw; justify-content: center;
+  }
+  .card .num { font-size: clamp(16px, 3.6cqw, 40px); color: var(--gold); text-shadow: 0 0 1cqw var(--gold); }
+  .card .name { font-size: clamp(6px, 0.95cqw, 11px); line-height: 1.6; }
+  .card .stars { color: var(--pink); font-family: system-ui, sans-serif; font-size: clamp(9px, 1.4cqw, 16px); letter-spacing: 0.2cqw; }
+  .card .best { color: var(--cyan); font-size: clamp(6px, 0.95cqw, 11px); }
+  .sub { color: var(--muted); font-size: clamp(8px, 1.1cqw, 13px); margin-bottom: 1.6cqw; }
+
+  .howto { display: grid; grid-template-columns: auto auto; gap: 1.2cqw 2.4cqw; text-align: left; margin: 0 auto 2cqw; width: max-content; max-width: 100%; font-size: clamp(7px, 1.15cqw, 14px); line-height: 1.6; }
+  .howto dt { color: var(--gold); }
+  .howto dd { margin: 0; color: var(--ink); }
+
+  .stats { display: grid; grid-template-columns: auto auto; gap: 1cqw 3cqw; margin: 0 auto 2cqw; width: max-content; max-width: 100%; font-size: clamp(8px, 1.3cqw, 15px); text-align: left; }
+  .stats .v { color: var(--cyan); text-align: right; }
+  .stats .v.rec { color: var(--gold); text-shadow: 0 0 1cqw var(--gold); }
+  .big { font-size: clamp(18px, 4cqw, 46px); color: var(--gold); text-shadow: 0 0 1.4cqw var(--gold); margin: 1cqw 0 2cqw; }
+  .row { display: flex; justify-content: center; flex-wrap: wrap; }
+  .row button { min-width: 22cqw; }
+
+  #touch { position: absolute; inset: auto 0 0 0; display: none; justify-content: space-between; padding: 2cqw 3cqw; pointer-events: none; }
+  #touch.on { display: flex; }
+  #touch .pad { display: flex; gap: 2.4cqw; }
+  #touch button {
+    pointer-events: auto; min-width: 0; margin: 0; width: 10cqw; height: 10cqw; padding: 0;
+    border-radius: 50%; font-size: clamp(12px, 3cqw, 30px); opacity: 0.55; background: rgba(20, 10, 50, 0.6);
+    touch-action: none;
+  }
+  #touch button.act { opacity: 0.9; border-color: var(--pink); }
+  #pauseBtn { position: absolute; top: 9cqw; right: 1.5cqw; min-width: 0; width: 6cqw; height: 6cqw; padding: 0; border-radius: 50%; display: none; font-size: clamp(10px, 1.8cqw, 20px); opacity: 0.6; }
+  #pauseBtn.on { display: block; }
+
+  #rotate { display: none; position: fixed; inset: 0; background: var(--bg); color: var(--ink); place-items: center; text-align: center; padding: 16px; font-size: 12px; line-height: 2; z-index: 5; }
+  @media (orientation: portrait) and (pointer: coarse) { #rotate { display: grid; } }
+  @media (prefers-reduced-motion: reduce) { .logo { animation: none; } button { transition: none; } }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="960" height="544" aria-label="Tela do jogo Saturn Rush"></canvas>
+
+  <div id="ui">
+    <section class="screen" data-screen="title">
+      <img class="logo" src="assets/saturno.png" alt="Saturno de óculos neon, o herói do jogo">
+      <h1>SATURN RUSH</h1>
+      <p class="tag">SPEEDRUN GALÁCTICO</p>
+      <div class="menu">
+        <button data-action="single">Jogar fase</button>
+        <button data-action="run">Speedrun completo</button>
+        <button data-action="howto">Como jogar</button>
+        <button data-action="sound" id="soundBtn" class="ghost">Som: ligado</button>
+      </div>
+      <p class="foot" id="titleBest"></p>
+    </section>
+
+    <section class="screen" data-screen="diff" hidden>
+      <h2>Escolha a dificuldade</h2>
+      <div class="diffs">
+        <button data-action="diff" data-diff="facil"><b>Fácil</b><small>5 vidas<br>inimigos lentos<br>checkpoint</small></button>
+        <button data-action="diff" data-diff="normal"><b>Normal</b><small>3 vidas<br>inimigos normais<br>checkpoint</small></button>
+        <button data-action="diff" data-diff="dificil"><b>Difícil</b><small>2 vidas<br>inimigos rápidos<br>buracos maiores<br>sem checkpoint</small></button>
+      </div>
+      <button data-action="back" class="ghost">Voltar</button>
+    </section>
+
+    <section class="screen" data-screen="levels" hidden>
+      <h2>Escolha a fase</h2>
+      <p class="sub">Dificuldade: <span id="levelsDiff"></span></p>
+      <div class="levels" id="levelGrid"></div>
+      <button data-action="back" class="ghost">Voltar</button>
+    </section>
+
+    <section class="screen" data-screen="howto" hidden>
+      <h2>Como jogar</h2>
+      <dl class="howto">
+        <dt>← → / A D</dt><dd>Mover</dd>
+        <dt>Espaço / ↑ / W / Z</dt><dd>Pular (segure para ir mais alto)</dd>
+        <dt>Shift / X</dt><dd>Correr (pulos mais longos)</dd>
+        <dt>R</dt><dd>Reiniciar (reset do speedrun)</dd>
+        <dt>Esc / P</dt><dd>Pausar</dd>
+        <dt>M</dt><dd>Som liga/desliga</dd>
+        <dt>Inimigos</dt><dd>Pule na cabeça para derrotar.<br>Meteoros com espinhos não podem ser pisados!</dd>
+        <dt>Objetivo</dt><dd>Chegue ao portal o mais rápido possível<br>e conquiste a medalha de ouro.</dd>
+      </dl>
+      <button data-action="back" class="ghost">Voltar</button>
+    </section>
+
+    <section class="screen" data-screen="pause" hidden>
+      <h2>Pausado</h2>
+      <div class="menu">
+        <button data-action="resume">Continuar</button>
+        <button data-action="restart">Reiniciar</button>
+        <button data-action="menu">Menu inicial</button>
+      </div>
+    </section>
+
+    <section class="screen" data-screen="results" hidden>
+      <h2 id="resTitle">Fase concluída!</h2>
+      <p class="big" id="resTime"></p>
+      <div class="stats" id="resStats"></div>
+      <div class="row">
+        <button data-action="next" id="resNext">Próxima fase</button>
+        <button data-action="retry" id="resRetry">Tentar de novo</button>
+        <button data-action="menu">Menu</button>
+      </div>
+    </section>
+
+    <section class="screen" data-screen="over" hidden>
+      <h2 style="color:#ff5a5a;text-shadow:0 0 1cqw #ff5a5a">Fim de jogo</h2>
+      <p class="sub" id="overText"></p>
+      <div class="row">
+        <button data-action="retry">Tentar de novo</button>
+        <button data-action="menu">Menu</button>
+      </div>
+    </section>
+
+    <section class="screen" data-screen="runend" hidden>
+      <h2>Speedrun completo!</h2>
+      <p class="big" id="runTotal"></p>
+      <div class="stats" id="runStats"></div>
+      <div class="row">
+        <button data-action="retry">Correr de novo</button>
+        <button data-action="menu">Menu</button>
+      </div>
+    </section>
+  </div>
+
+  <div id="touch" aria-hidden="true">
+    <div class="pad"><button data-k="left">◀</button><button data-k="right">▶</button></div>
+    <div class="pad"><button data-k="run">B</button><button data-k="jump">A</button></div>
+  </div>
+  <button id="pauseBtn" aria-label="Pausar">II</button>
+</div>
+<div id="rotate">Gire o celular<br>para jogar na horizontal ↻</div>
+<script src="game.js"></script>
+</body>
+</html>
